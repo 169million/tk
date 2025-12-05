@@ -1,4 +1,5 @@
 import tkinter as tk
+import collision
 
 root = tk.Tk()
 root.attributes("-fullscreen", True)
@@ -44,6 +45,7 @@ testing2 = tk.Label(SecondScreen, text="woah, second screen")
 player = tk.Label(SecondScreen, text="🙂", font="50")
 player.place(x=200, y=200)
 
+collision.set_player(player, root)
 # --- Track which keys are pressed ---
 keys_pressed = set()
 
