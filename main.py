@@ -1,6 +1,8 @@
 import tkinter as tk
 import collision
 
+game_running = True
+
 root = tk.Tk()
 root.attributes("-fullscreen", True)
 screenw = root.winfo_screenwidth()
@@ -42,10 +44,13 @@ order([btn1,testing,btn2],
 # Screen 2
 testing2 = tk.Label(SecondScreen, text="woah, second screen")
 
-player = tk.Label(SecondScreen, text="🙂", font="50")
+player = tk.Label(SecondScreen, text="🙂", font=("Arial", 25))
 player.place(x=200, y=200)
 
-collision.set_player(player, root)
+enemy = tk.Label(SecondScreen, text="😠", font=("Arial", 25))
+enemy.place(x=500,y=500)
+
+font_size = int(player.cget("font").split()[1])
 # --- Track which keys are pressed ---
 keys_pressed = set()
 
@@ -63,22 +68,23 @@ def move():
 
     if "w" in keys_pressed and y-step >= 0:
         y -= step
-    if "s" in keys_pressed and y+step <= (SecondScreen.winfo_height() - (int(player.cget("font"))/2)):
+    if "s" in keys_pressed and y+step <= (SecondScreen.winfo_height() - (font_size/2)):
         y += step
     if "a" in keys_pressed and x-step >= 0:
         x -= step
-    if "d" in keys_pressed and x+step <= (SecondScreen.winfo_width() - (int(player.cget("font"))/2)):
+    if "d" in keys_pressed and x+step <= (SecondScreen.winfo_width() - (font_size/2)):
         x += step
-
     player.place(x=x, y=y)
-    root.after(20, move)  # repeat every 20 ms
+    collision.load(root,player,enemy)
+    if game_running:
+        root.after(20, move)
 
 # Bind key events
 SecondScreen.bind_all("<KeyPress>", key_press)
 SecondScreen.bind_all("<KeyRelease>", key_release)
 
-# Start the movement loop
-move()
+root.after(100, move)
+
 
 order([testing2],
       [{}])
