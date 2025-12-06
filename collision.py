@@ -1,7 +1,7 @@
 def load(root, player, enemy):
     player_x = player.winfo_x()
     player_y = player.winfo_y()
-    player_size = int(player.cget("font").split()[1])  # extract the font size
+    player_size = int(player.cget("font").split()[1]) 
 
     enemy_x = enemy.winfo_x()
     enemy_y = enemy.winfo_y()
@@ -15,4 +15,3 @@ def load(root, player, enemy):
         from __main__ import game_running
         game_running = False
         root.after(0, root.destroy)
-

@@ -1,4 +1,5 @@
 import tkinter as tk
+import math
 import collision
 
 game_running = True
@@ -22,9 +23,11 @@ SecondScreen = tk.Frame(screens)
 SecondScreen.place(relwidth=1,relheight=1)
 
 def order(widgetsorder, settings):
-    for index, widget in enumerate(widgetsorder):
-        widget.pack(**settings[index])
-
+    for i, widget in enumerate(widgetsorder):
+        widget.pack(**settings[i])
+def whatscreenactive():
+    # last child = currently raised frame
+    return screens.winfo_children()[-1]
 # Screen 1
 testing = tk.Label(HomeScreen, text="\"testing this\"")
 def changetext():
@@ -61,23 +64,52 @@ def key_release(event):
     keys_pressed.discard(event.keysym.lower())
 
 def move():
-    x, y = player.winfo_x(), player.winfo_y()
-    step = 5
-    if "shift_l" in keys_pressed or "shift_r" in keys_pressed:
-        step = 10
+    if whatscreenactive() is SecondScreen:
+        x, y = player.winfo_x(), player.winfo_y()
+        ex, ey = enemy.winfo_x(), enemy.winfo_y()
 
-    if "w" in keys_pressed and y-step >= 0:
-        y -= step
-    if "s" in keys_pressed and y+step <= (SecondScreen.winfo_height() - (font_size/2)):
-        y += step
-    if "a" in keys_pressed and x-step >= 0:
-        x -= step
-    if "d" in keys_pressed and x+step <= (SecondScreen.winfo_width() - (font_size/2)):
-        x += step
-    player.place(x=x, y=y)
-    collision.load(root,player,enemy)
-    if game_running:
-        root.after(20, move)
+        step = 5
+        estep = 6
+
+        # --- Enemy movement ---
+        dx = x - ex
+        dy = y - ey
+        distance = math.hypot(dx, dy)
+
+        if distance != 0:
+            ndx = dx / distance
+            ndy = dy / distance
+        else:
+            ndx = ndy = 0
+
+        esx = ndx * estep
+        esy = ndy * estep
+
+        # Sprint
+        if "shift_l" in keys_pressed or "shift_r" in keys_pressed:
+            step = 10
+
+        # Player movement
+        if "w" in keys_pressed and y-step >= 0:
+            y -= step
+        if "s" in keys_pressed and y+step <= (SecondScreen.winfo_height() - (font_size/2)):
+            y += step
+        if "a" in keys_pressed and x-step >= 0:
+            x -= step
+        if "d" in keys_pressed and x+step <= (SecondScreen.winfo_width() - (font_size/2)):
+            x += step
+
+        # Apply enemy movement
+        ex += esx
+        ey += esy
+
+        player.place(x=x, y=y)
+        enemy.place(x=int(ex), y=int(ey))
+
+        collision.load(root, player, enemy)
+
+    root.after(20, move)
+
 
 # Bind key events
 SecondScreen.bind_all("<KeyPress>", key_press)
