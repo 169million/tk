@@ -26,7 +26,6 @@ def order(widgetsorder, settings):
     for i, widget in enumerate(widgetsorder):
         widget.pack(**settings[i])
 def whatscreenactive():
-    # last child = currently raised frame
     return screens.winfo_children()[-1]
 # Screen 1
 testing = tk.Label(HomeScreen, text="\"testing this\"")
@@ -54,7 +53,7 @@ enemy = tk.Label(SecondScreen, text="😠", font=("Arial", 25))
 enemy.place(x=500,y=500)
 
 font_size = int(player.cget("font").split()[1])
-# --- Track which keys are pressed ---
+
 keys_pressed = set()
 
 def key_press(event):
@@ -71,7 +70,6 @@ def move():
         step = 5
         estep = 6
 
-        # --- Enemy movement ---
         dx = x - ex
         dy = y - ey
         distance = math.hypot(dx, dy)
@@ -85,11 +83,8 @@ def move():
         esx = ndx * estep
         esy = ndy * estep
 
-        # Sprint
         if "shift_l" in keys_pressed or "shift_r" in keys_pressed:
             step = 10
-
-        # Player movement
         if "w" in keys_pressed and y-step >= 0:
             y -= step
         if "s" in keys_pressed and y+step <= (SecondScreen.winfo_height() - (font_size/2)):
@@ -98,8 +93,6 @@ def move():
             x -= step
         if "d" in keys_pressed and x+step <= (SecondScreen.winfo_width() - (font_size/2)):
             x += step
-
-        # Apply enemy movement
         ex += esx
         ey += esy
 
@@ -110,14 +103,10 @@ def move():
 
     root.after(20, move)
 
-
-# Bind key events
 SecondScreen.bind_all("<KeyPress>", key_press)
 SecondScreen.bind_all("<KeyRelease>", key_release)
 
 root.after(100, move)
-
-
 order([testing2],
       [{}])
 
