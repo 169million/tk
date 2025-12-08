@@ -1,5 +1,6 @@
 import tkinter as tk
 import math
+import random
 import collision
 
 game_running = True
@@ -49,8 +50,16 @@ testing2 = tk.Label(SecondScreen, text="woah, second screen")
 player = tk.Label(SecondScreen, text="🙂", font=("Arial", 25))
 player.place(x=200, y=200)
 
-enemy = tk.Label(SecondScreen, text="😠", font=("Arial", 25))
-enemy.place(x=500,y=500)
+enemynumber = 5
+enemys = {}
+for i in range(enemynumber):
+    enemys[i] = tk.Label(SecondScreen, text="😠", font=("Arial", 25))
+    erx = random.randint(500,1000)
+    ery = random.randint(500,1000)
+    enemys[i].place(x=erx,y=ery)
+
+# enemy = tk.Label(SecondScreen, text="😠", font=("Arial", 25))
+# enemy.place(x=500,y=500)
 
 font_size = int(player.cget("font").split()[1])
 
@@ -64,24 +73,32 @@ def key_release(event):
 
 def move():
     if whatscreenactive() is SecondScreen:
+        ex,ey,dx,dy,distance,esx,esy = [],[],[],[],[],[],[]
         x, y = player.winfo_x(), player.winfo_y()
-        ex, ey = enemy.winfo_x(), enemy.winfo_y()
 
         step = 5
         estep = 6
+        
+        for i in range(len(enemys)):
+            ex.append(enemys[i].winfo_x())
+            ey.append(enemys[i].winfo_y())
+            dx.append(x - ex[i])
+            dy.append(y - ey[i])
+            distance.append(math.hypot(dx[i],dy[i]))
+            esx.append((dx[i] / distance[i]) * estep)
+            esy.append((dy[i] / distance[i]) * estep)
+        # dx = x - ex
+        # dy = y - ey
+        # distance = math.hypot(dx, dy)
+        # print(distance)
+        # if distance != 0:
+        #     ndx = dx / distance
+        #     ndy = dy / distance
+        # else:
+        #     ndx = ndy = 0
 
-        dx = x - ex
-        dy = y - ey
-        distance = math.hypot(dx, dy)
-
-        if distance != 0:
-            ndx = dx / distance
-            ndy = dy / distance
-        else:
-            ndx = ndy = 0
-
-        esx = ndx * estep
-        esy = ndy * estep
+        # esx = ndx * estep
+        # esy = ndy * estep
 
         if "shift_l" in keys_pressed or "shift_r" in keys_pressed:
             step = 10
@@ -93,13 +110,16 @@ def move():
             x -= step
         if "d" in keys_pressed and x+step <= (SecondScreen.winfo_width() - (font_size/2)):
             x += step
-        ex += esx
-        ey += esy
+        
 
         player.place(x=x, y=y)
-        enemy.place(x=int(ex), y=int(ey))
-
-        collision.load(root, player, enemy)
+        for i in range(len(enemys)):
+            ex[i] += esx[i]
+            ey[i] += esy[i]
+            enemys[i].place(x=int(ex[i]),y=int(ey[i]))
+            collision.load(root, player, enemys[i])
+        # enemy.place(x=int(ex), y=int(ey))
+        # collision.load(root, player, enemy)
 
     root.after(20, move)
 
