@@ -2,7 +2,7 @@ import tkinter as tk
 import json
 import os
 
-ROWS, COLS = 30,30
+ROWS, COLS = 11,11
 root = tk.Tk()
 data = []
 labels = []
@@ -34,8 +34,8 @@ def start():
     for r in range(ROWS):
         row_labels = []
         for c in range(COLS):
-            lbl = tk.Label(root, width=4, height=2, bg="black" if data[r][c] else "white", bd=0)
-            lbl.grid(row=r, column=c)
+            lbl = tk.Label(root, width=10, height=5,bg="black" if data[r][c] else "white", bd=0)
+            lbl.grid(row=r, column=c,padx=1,pady=1)
             lbl.bind("<Button-1>", lambda e, r=r, c=c, l=lbl: toggle(r, c, l))
             row_labels.append(lbl)
         labels.append(row_labels)
